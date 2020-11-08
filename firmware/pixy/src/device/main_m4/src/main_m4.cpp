@@ -39,6 +39,10 @@ const // so m0 program goes into RO memory
 #include "../main_m0/m0_image.c"
 #endif
 
+
+Qqueue *g_qqueue = NULL;
+
+
 int main(void)	 
 {
     // insert a small delay so power supply can stabilize
@@ -52,9 +56,12 @@ int main(void)
 
 	exec_init(g_chirpUsb);
 	cam_init();
+
+	// cc_init(g_chirpUsb);
 	
-	cc_init(g_chirpUsb);
-	line_init(g_chirpUsb);
+		g_qqueue = new Qqueue;
+	
+		line_init(g_chirpUsb);
 	ser_init(g_chirpUsb);
 	exec_mainLoop();
 

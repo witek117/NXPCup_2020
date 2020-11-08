@@ -181,8 +181,8 @@ void ser_packet(uint8_t type, const uint8_t *rxData, uint8_t len, bool checksum)
 			ser_sendError(SER_ERROR_INVALID_REQUEST, checksum);
 		else
 		{
-			rcs_setPos(0, *(uint16_t *)rxData);
-			rcs_setPos(1, *(uint16_t *)&rxData[2]);
+			//rcs_setPos(0, *(uint16_t *)rxData);
+			//rcs_setPos(1, *(uint16_t *)&rxData[2]);
 			ser_sendResult(0, checksum);
 		}
 	}
@@ -193,7 +193,7 @@ void ser_packet(uint8_t type, const uint8_t *rxData, uint8_t len, bool checksum)
 		else
 		{
 			// set override, user is now in control
-			cc_setLEDOverride(true);
+			// cc_setLEDOverride(true);
 			led_setRGB(rxData[0], rxData[1], rxData[2]);
 			ser_sendResult(0, checksum);
 		}
@@ -205,8 +205,8 @@ void ser_packet(uint8_t type, const uint8_t *rxData, uint8_t len, bool checksum)
 		else
 		{
 			// set lower LED override if lower lamp is turned on
-			if (rxData[1])
-				cc_setLEDOverride(true);
+			// if (rxData[1])
+				// cc_setLEDOverride(true);
 			led_setLamp(rxData[0], rxData[1]);
 			ser_sendResult(0, checksum);				
 		}				
@@ -223,7 +223,7 @@ void ser_packet(uint8_t type, const uint8_t *rxData, uint8_t len, bool checksum)
 
 ///////////////////////////////////////////// OTHER FUNCTION /////////////////////////////////////////
 
-
+/*
 uint16_t lego_getData(uint8_t *buf, uint32_t buflen)
 {
 	static uint16_t lastReverse = 0xffff;
@@ -284,6 +284,7 @@ uint16_t lego_getData(uint8_t *buf, uint32_t buflen)
 	else 
 	if (c==0x50)
 	{
+	////
 		BlobA *max;
 		max = (BlobA *)g_blobs->getMaxBlob();
 		if (max==0)
@@ -308,7 +309,9 @@ uint16_t lego_getData(uint8_t *buf, uint32_t buflen)
 				temp = ((int32_t)max->m_angle*91)>>7;
 				g_angle = temp;
 			}
-		}		
+		}	
+
+		////
 		return 6;
 	}
 	else if (c==0x60)
@@ -318,6 +321,7 @@ uint16_t lego_getData(uint8_t *buf, uint32_t buflen)
 	}
 	else if (c>=0x51 && c<=0x57)
 	{
+		////
 		BlobA *max;
 		max = g_blobs->getMaxBlob(c-0x50, &numBlobs);
 		if (max==0)
@@ -338,10 +342,12 @@ uint16_t lego_getData(uint8_t *buf, uint32_t buflen)
 			temp = (height*1262)>>10;
 			buf[4] = temp; // height
 		}
+		////
 		return 5;
 	}
 	else if (c==0x58)
 	{
+		////
 		BlobA *max;
 		if (serial->receive((uint8_t *)&d, 2)<2) // receive cc signature to look for
 			return 0;
@@ -366,6 +372,7 @@ uint16_t lego_getData(uint8_t *buf, uint32_t buflen)
 			temp = ((int32_t)max->m_angle*91)>>7;
 			buf[5] = temp; // angle
 		}
+		////
 		return 6;
 	}
 	else if (c==0x5a)
@@ -397,7 +404,8 @@ uint16_t lego_getData(uint8_t *buf, uint32_t buflen)
 			
 			lastReverse = reverse;
 			lastLamp = lamp;
-			return line_legoLineData(buf, buflen);
+			return 0;
+			// return line_legoLineData(buf, buflen);
 			}
 		else 
 		{
@@ -449,6 +457,7 @@ uint16_t lego_getData(uint8_t *buf, uint32_t buflen)
 	}
 	else  
 	{										  
+		////
 		if (c==0x42) // this works in port view mode on the ev3's LCD
 		{
 			BlobA *max;
@@ -463,11 +472,12 @@ uint16_t lego_getData(uint8_t *buf, uint32_t buflen)
 			}
 		}
 		else
+		////
 			buf[0] = 1;	 // need to return nonzero value for other inquiries or LEGO brick will think we're an analog sensor
 		return 1;
 	}
 }
-
+*/
 void ser_sendResult(int32_t val, bool checksum)
 {
 	uint8_t *txData;
@@ -500,9 +510,11 @@ int32_t ser_packetChirp(const uint8_t &type, const uint32_t &len, const uint8_t 
 uint32_t txCallback(uint8_t *data, uint32_t len)
 {
 	if (g_interface==SER_INTERFACE_LEGO)
-		return lego_getData(data, len);
+		//return lego_getData(data, len);
+		return 0;
 	else 
-		return g_blobs->getBlock(data, len);
+		return 0;
+		//return g_blobs->getBlock(data, len);
 }
 
 // TX data return mechanism for new serial protocol (v3.0--)
@@ -660,49 +672,14 @@ int ser_init(Chirp *chirp)
 	chirp->registerModule(g_module);
 	// i2c_init(txCallback);
 	uart_init(txCallback);
-	ad_init();
+	// ad_init();
 
-	ser_loadParams();
+	// ser_loadParams();
 		
-	return 0;	
-}
-
-void ser_loadParams()
-{
-	prm_add("Data out port", 0, PRM_PRIORITY_1, 
-		"Selects the port that's used to output data (default Arduino ICSP SPI) @c Interface @s 0=Arduino_ICSP_SPI @s 1=SPI_with_SS @s 2=I2C @s 3=UART @s 4=analog/digital_x @s 5=analog/digital_y @s 6=LEGO_I2C", UINT8(0), END);
-	prm_add("I2C address", PRM_FLAG_HEX_FORMAT, PRM_PRIORITY_1-1, 
-		"@c Interface Sets the I2C address if you are using I2C data out port. (default 0x54)", UINT8(I2C_DEFAULT_SLAVE_ADDR), END);
-	prm_add("UART baudrate", 0, PRM_PRIORITY_1-2, 
-		"@c Interface Sets the UART baudrate if you are using UART data out port. (default 115200)", UINT32(115200), END);
-	prm_add("Pixy 1.0 compatibility mode", PRM_FLAG_CHECKBOX, PRM_PRIORITY_1-3, 
-		"@c Interface If this is set, Pixy will return data using the Pixy 1.0 protocol.  This only applies to color connected components program, not other programs. (default false)", UINT8(0), END);
-
-	uint8_t interface, addr;
-	uint32_t baudrate;
-
-	// prm_get("I2C address", &addr, END);
-	// g_i2c0->setSlaveAddr(addr);
-
-	// prm_get("UART baudrate", &baudrate, END);
-	// g_uart0->setBaudrate(baudrate);
-
-	prm_get("Data out port", &interface, END);
-	ser_setInterface(interface);
-}
-
-int ser_setInterface(uint8_t interface)
-{
-	if (interface>SER_INTERFACE_LEGO)
-		return -1;
-	
 	if (g_serial!=NULL)
 		g_serial->close();
-
-	// get g_oldProtocol after we close to prevent race condition with spi interrupt routine
-	prm_get("Pixy 1.0 compatibility mode", &g_oldProtocol, END);
 	
-	// reset variables
+		// reset variables
 	g_state = 0;
 	g_interface = 3; // UART
 	g_txReadIndex = 0; 
@@ -713,8 +690,8 @@ int ser_setInterface(uint8_t interface)
 	g_serial = g_uart0; // always uart
 	
 	g_serial->open();
-
-	return 0;
+	
+	return 0;	
 }
 
 void ser_update()

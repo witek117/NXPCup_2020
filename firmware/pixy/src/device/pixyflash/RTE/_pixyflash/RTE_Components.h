@@ -3,8 +3,8 @@
  * Auto generated Run-Time-Environment Configuration File
  *      *** Do not modify ! ***
  *
- * Project: 'main_m4' 
- * Target:  'Flash' 
+ * Project: 'pixyflash' 
+ * Target:  'pixyflash' 
  */
 
 #ifndef RTE_COMPONENTS_H

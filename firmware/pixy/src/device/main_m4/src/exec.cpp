@@ -365,7 +365,7 @@ int32_t exec_setView(const uint16_t &index)
 int32_t exec_toggleLamp()
 {
 	int state = led_toggleLamp();
-	cc_setLEDOverride(state);
+	// cc_setLEDOverride(state);
 	return state;
 }
 
@@ -421,6 +421,77 @@ void exec_periodic()
 		exec_loadParams();
 }
 
+static uint8_t g_goto;
+static uint8_t g_index;
+static uint32_t g_timer;
+
+void reset()
+{
+	g_index = 0;
+	g_goto = 0;
+}
+
+bool selectProgram(uint8_t progs, uint8_t *selectedProg)
+{
+	uint32_t bt; 
+
+	if (progs<=1)
+		return 0;
+
+	while(1)
+	{
+		bt = button();
+
+		switch(g_goto)
+		{
+		case 0:  // wait for nothing
+			setTimer(&g_timer);
+			g_index = *selectedProg + 1; // start at red
+			g_goto = 1;
+			// setLED(g_index);
+			break;
+
+		case 1:	// wait for button down
+			if (bt)
+			{
+				setTimer(&g_timer);
+				// setLED(g_index);
+				g_goto = 2;
+			}
+			else if (getTimer(g_timer)>BT_PROG_TIMEOUT)
+			{
+				g_index = *selectedProg+1;
+				// flashLED(g_index, 4); 
+				reset();
+				return false;
+			}
+			break;
+
+		case 2: // cycle through choices, wait for button up
+			if (!bt)
+			{
+				*selectedProg = g_index-1; // save g_index
+				// flashLED(g_index, 4); 
+				reset(); // resets g_index
+				return true;
+			}
+			else if (getTimer(g_timer)>BT_INDEX_CYCLE_TIMEOUT)
+			{
+				setTimer(&g_timer);
+				g_index++;
+				if (g_index==progs+1)
+					g_index = 1;
+
+				// setLED(g_index);
+			}							   
+			break;
+
+		default:
+			reset();
+		}
+	}
+}
+
 void exec_select()
 {
 	uint8_t select;
@@ -460,10 +531,10 @@ static void loadParams() {
 }
 
 void exec_loadParams() {
- 	cc_loadParams();
-	ser_loadParams();
+ 	// cc_loadParams();
+	// ser_loadParams();
 	cam_loadParams();
-	rcs_loadParams();
+	// rcs_loadParams();
 	line_loadParams(exec_getProgIndex(PROG_NAME_LINE));
 	loadParams(); // local
 }
@@ -506,7 +577,7 @@ void exec_mainLoop() {
 					// reset shadows
 					prm_resetShadows();
 					Prog::m_view = -1; 
-					cc_setLEDOverride(false);
+					// cc_setLEDOverride(false);
 				}
 				if (exec_progSetup(saveIndex)<0) { // then run				
 					g_state = 3; // stop state

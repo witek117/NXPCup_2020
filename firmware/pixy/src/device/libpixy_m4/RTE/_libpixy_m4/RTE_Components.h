@@ -3,8 +3,8 @@
  * Auto generated Run-Time-Environment Configuration File
  *      *** Do not modify ! ***
  *
- * Project: 'main_m4' 
- * Target:  'Flash' 
+ * Project: 'libpixy_m4' 
+ * Target:  'libpixy_m4' 
  */
 
 #ifndef RTE_COMPONENTS_H
@@ -14,7 +14,7 @@
 /*
  * Define the Device Header File: 
  */
-#define CMSIS_device_header "ARMCM4_FP.h"
+#define CMSIS_device_header "ARMCM4.h"
 
 
 

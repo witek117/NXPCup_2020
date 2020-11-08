@@ -207,8 +207,8 @@ void pixyInit(void)
 #endif
 
 	// clear RC servo registers to prevent and glitches upon initialization
-	rcs_enable(0, 0);
-	rcs_enable(1, 0);
+	// rcs_enable(0, 0);
+	// rcs_enable(1, 0);
 
 	ADCInit();
    	SCTInit();
@@ -252,11 +252,11 @@ void pixySimpleInit(void)
 
 void cprintf(uint32_t flags, const char *format, ...)
 {
-    char  buf[128];
-    va_list args;
-    va_start(args, format);
-    vsprintf((char *)buf, (char const *)format, args);
-    va_end(args);
+	char  buf[128];
+	va_list args;
+	va_start(args, format);
+	vsprintf((char *)buf, (char const *)format, args);
+	va_end(args);
 
 	CRP_SEND_XDATA(g_chirpUsb, HTYPE(FOURCC('T','E','X','T')), HINT32(flags), HSTRING(buf));
 }

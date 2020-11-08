@@ -19,13 +19,15 @@
 #include "exec.h"
 #include "pixytypes.h"
 
+#define VIDEO_RGB_SIZE    2
+/*
 #define PROG_NAME_VIDEO         "video"
 #define PROG_VIDEO_MIN_TYPE     0x70
 #define PROG_VIDEO_MAX_TYPE     0x7f
 
 #define TYPE_REQUEST_GETRGB   0x70
 
-#define VIDEO_RGB_SIZE    2
+
 
 class ProgVideo : public Prog
 {
@@ -41,7 +43,7 @@ private:
 	void sendCustom(uint8_t renderFlags=RENDER_FLAG_FLUSH);
 
 };
-
+*/
 uint32_t getRGB(uint16_t x, uint16_t y, uint8_t sat);
 
 #endif

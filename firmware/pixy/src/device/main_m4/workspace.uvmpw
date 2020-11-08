@@ -10,19 +10,22 @@
   <project>
     <PathAndName>.\main_m4.uvprojx</PathAndName>
     <NodeIsActive>1</NodeIsActive>
-  </project>
-
-  <project>
-    <PathAndName>..\main_m0\main_m0.uvproj</PathAndName>
     <NodeIsExpanded>1</NodeIsExpanded>
   </project>
 
   <project>
-    <PathAndName>..\libpixy_m0\libpixy_m0.uvproj</PathAndName>
+    <PathAndName>..\main_m0\main_m0.uvprojx</PathAndName>
+    <NodeIsExpanded>1</NodeIsExpanded>
   </project>
 
   <project>
-    <PathAndName>..\libpixy_m4\libpixy_m4.uvproj</PathAndName>
+    <PathAndName>..\libpixy_m0\libpixy_m0.uvprojx</PathAndName>
+    <NodeIsExpanded>1</NodeIsExpanded>
+  </project>
+
+  <project>
+    <PathAndName>..\libpixy_m4\libpixy_m4.uvprojx</PathAndName>
+    <NodeIsExpanded>1</NodeIsExpanded>
   </project>
 
 </ProjectWorkspace>

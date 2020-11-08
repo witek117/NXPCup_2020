@@ -25,7 +25,7 @@
 #define Y_CENTER    (CAM_RES2_HEIGHT/2)
 
 #define PROG_NAME_PANTILT  "pan_tilt_demo"
-class ServoLoop
+/*class ServoLoop
 {
 public:
 	ServoLoop(uint8_t axis, uint32_t pgain=0, uint32_t dgain=0);
@@ -48,23 +48,23 @@ public:
 	ProgPt(uint8_t progIndex);
 	virtual ~ProgPt();
 	
-	virtual int loop(char *status);
-	virtual int getAction(uint16_t index, const char **name, const char **scriptlet);
-	virtual int packet(uint8_t type, const uint8_t *data, uint8_t len, bool checksum);
+	// virtual int loop(char *status);
+	//virtual int getAction(uint16_t index, const char **name, const char **scriptlet);
+	//virtual int packet(uint8_t type, const uint8_t *data, uint8_t len, bool checksum);
 
-	static void acquire();
-	static BlobA *track();
+	// static void acquire();
+	// static BlobA *track();
 
 private:
-	static void shadowCallback(const char *id, const uint32_t &val);
-	static void getVals();
+	// static void shadowCallback(const char *id, const uint32_t &val);
+	// static void getVals();
 	
-	static ServoLoop m_panLoop;
-	static ServoLoop m_tiltLoop;
+	//static ServoLoop m_panLoop;
+	//static ServoLoop m_tiltLoop;
 
 	static int16_t m_index;
 };
 
-
+*/
 
 #endif

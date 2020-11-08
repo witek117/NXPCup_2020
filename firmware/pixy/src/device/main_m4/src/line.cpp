@@ -93,16 +93,16 @@ static LineState g_lineState;
 
 static uint8_t g_renderMode;
 
-static uint8_t g_lineFiltering;
-static uint8_t g_barcodeFiltering;
+// static uint8_t g_lineFiltering;
+//static uint8_t g_barcodeFiltering;
 
 static bool g_frameFlag;
 static bool g_primaryMutex;
 static bool g_allMutex;
 
 static int16_t g_defaultTurnAngle;
-static uint8_t g_delayedTurn;
-static bool g_manualVectorSelect;
+// static uint8_t g_delayedTurn;
+// static bool g_manualVectorSelect;
 
 bool checkGraph(int val, uint8_t suppress0=0, uint8_t suppress1=0, SimpleListNode<Intersection> *intern=NULL);
 
@@ -567,7 +567,7 @@ int line_hLine(uint8_t row, uint16_t *buf, uint32_t len) {
 	if (row == 90) {
 		leftEdgeLine.calculateAlphas();
 		
-		// cprintf(0, "%d %d %d %d %d",leftEdgeLine.alphas[0], leftEdgeLine.alphas[1], leftEdgeLine.alphas[2], leftEdgeLine.alphas[3], leftEdgeLine.alphas[4]);
+		cprintf(0, "%d %d %d %d %d",leftEdgeLine.alphas[0], leftEdgeLine.alphas[1], leftEdgeLine.alphas[2], leftEdgeLine.alphas[3], leftEdgeLine.alphas[4]);
 	}
 	
 	
@@ -631,26 +631,26 @@ void line_shadowCallback(const char *id, const void *val)
         g_minLineLength = *(uint16_t *)val;
         //g_minLineLength2 = g_minLineLength*g_minLineLength; // squared
     }
-    else if (strcmp(id, "Maximum line compare")==0)
-        g_maxLineCompare = *(uint32_t *)val; 
-    else if (strcmp(id, "White line")==0)
-        g_whiteLine = *(uint8_t *)val;
-    else if (strcmp(id, "Manual vector select")==0)
-        g_manualVectorSelect = *(uint8_t *)val;
-    else if (strcmp(id, "Line filtering")==0)
-        g_lineFiltering = *(uint8_t *)val;
-    else if (strcmp(id, "Intersection filtering")==0)
-    {
+    // else if (strcmp(id, "Maximum line compare")==0)
+    //     g_maxLineCompare = *(uint32_t *)val; 
+    // else if (strcmp(id, "White line")==0)
+    //     g_whiteLine = *(uint8_t *)val;
+    // else if (strcmp(id, "Manual vector select")==0)
+    //    g_manualVectorSelect = *(uint8_t *)val;
+    // else if (strcmp(id, "Line filtering")==0)
+    //     g_lineFiltering = *(uint8_t *)val;
+    //else if (strcmp(id, "Intersection filtering")==0)
+    //{
 //        uint8_t v;
        // v = *(uint8_t *)val;
         //leading = v*LINE_FILTERING_MULTIPLIER;
 //        trailing = (leading+1)>>1;
         //g_primaryIntersection.setTiming(leading, trailing); 
-    }
-    else if (strcmp(id, "Barcode filtering")==0)
-        g_barcodeFiltering = *(uint8_t *)val;
-    else if (strcmp(id, "Delayed turn")==0)
-        g_delayedTurn = *(uint8_t *)val;
+    //}
+    //else if (strcmp(id, "Barcode filtering")==0)
+    //    g_barcodeFiltering = *(uint8_t *)val;
+    // else if (strcmp(id, "Delayed turn")==0)
+    //     g_delayedTurn = *(uint8_t *)val;
     else if (strcmp(id, "Go")==0)
         g_go = *(uint8_t *)val;
     else if (strcmp(id, "Repeat")==0)
@@ -664,11 +664,14 @@ void line_shadowCallback(const char *id, const void *val)
 
 int line_loadParams(int8_t progIndex)
 {    
+	cprintf(0, "load params");
+	
     int i, responseInt=-1;
     char id[32], desc[128];
 //    uint16_t leading, trailing;
     
     // add params
+	
     if (progIndex>=0)
     {
         prm_add("Edge distance", PROG_FLAGS(progIndex) | PRM_FLAG_SLIDER, PRM_PRIORITY_4,
@@ -703,39 +706,14 @@ int line_loadParams(int8_t progIndex)
             "@c Expert @m 1 @M 10000 Sets the maximum distance between lines for them to be considered the same line between frames (default " STRINGIFY(LINE_MAX_COMPARE) ")", UINT32(LINE_MAX_COMPARE), END);
         prm_setShadowCallback("Maximum line compare", (ShadowCallback)line_shadowCallback);
 
-        prm_add("White line", PROG_FLAGS(progIndex) | PRM_FLAG_CHECKBOX, PRM_PRIORITY_5, 
-            "@c Tuning If this is set, Pixy will look for light lines on dark background.  If this is not set, Pixy will look for dark lines on light background (default false)", UINT8(0), END);
-        prm_setShadowCallback("White line", (ShadowCallback)line_shadowCallback);
 
-        prm_add("Line filtering", PROG_FLAGS(progIndex) | PRM_FLAG_SLIDER, PRM_PRIORITY_4-1, 
-            "@c Expert @m 0 @M 30 Sets the amount of noise filtering for line detection (default " STRINGIFY(LINE_LINE_FILTERING) ")", UINT8(LINE_LINE_FILTERING), END);
-        prm_setShadowCallback("Line filtering", (ShadowCallback)line_shadowCallback);
-
-        prm_add("Intersection filtering", PROG_FLAGS(progIndex) | PRM_FLAG_SLIDER, PRM_PRIORITY_4-2, 
-            "@c Expert @m 0 @M 30 Sets the amount of noise filtering for intersection detection (default " STRINGIFY(LINE_INTERSECTION_FILTERING) ")", UINT8(LINE_INTERSECTION_FILTERING), END);
-        prm_setShadowCallback("Intersection filtering", (ShadowCallback)line_shadowCallback);
-
-        prm_add("Barcode filtering", PROG_FLAGS(progIndex) | PRM_FLAG_SLIDER, PRM_PRIORITY_4-3, 
-            "@c Expert @m 0 @M 30 Sets the amount of noise filtering for barcode detection (default " STRINGIFY(LINE_BARCODE_FILTERING) ")", UINT8(LINE_BARCODE_FILTERING), END);
-        prm_setShadowCallback("Barcode filtering", (ShadowCallback)line_shadowCallback);
-
-        prm_add("Default turn angle", PROG_FLAGS(progIndex) | PRM_FLAG_SIGNED, PRM_PRIORITY_4-4, 
-            "@c Expert Sets the turn angle that Pixy chooses by default if next turn angle is not set.  Does not apply if Delayed turn is set (default 0)", UINT16(0), END);
-        
-        prm_add("Delayed turn", PROG_FLAGS(progIndex) | PRM_FLAG_CHECKBOX, PRM_PRIORITY_4-5, 
-            "@c Expert If true, Pixy will wait for client to choose turn direction after detecting intersection, otherwise Pixy will choose default turn angle or next turn angle after detecting intersection. (default false)", UINT8(0), END);
-        prm_setShadowCallback("Delayed turn", (ShadowCallback)line_shadowCallback);
-
-        prm_add("Manual vector select", PROG_FLAGS(progIndex) | PRM_FLAG_CHECKBOX, PRM_PRIORITY_4-6, 
-            "@c Expert If false, Pixy will automatically choose the primary vector for tracking. If true, the user selects the primary vectory by calling SelectVector (default false)", UINT8(0), END);
-        prm_setShadowCallback("Manual vector select", (ShadowCallback)line_shadowCallback);
-
-        prm_add("Go", PROG_FLAGS(progIndex) | PRM_FLAG_CHECKBOX  
+       
+         prm_add("Go", PROG_FLAGS(progIndex) | PRM_FLAG_CHECKBOX  
             | PRM_FLAG_INTERNAL, 
             PRM_PRIORITY_4,
             "@c Expert Debug flag. (default false)", UINT8(0), END);
         prm_setShadowCallback("Go", (ShadowCallback)line_shadowCallback);
-
+/**/
         prm_add("Repeat", PROG_FLAGS(progIndex) | PRM_FLAG_CHECKBOX 
             | PRM_FLAG_INTERNAL, 
             PRM_PRIORITY_4,
@@ -748,10 +726,14 @@ int line_loadParams(int8_t progIndex)
             sprintf(desc, "@c Barcode_Labels Sets the label for barcodes that match barcode pattern %d.", i);
             prm_add(id, PROG_FLAGS(progIndex), PRM_PRIORITY_3-i, desc, STRING(""), END);
         }
+				
+				sprintf(id, "Barcode label kupa");
+        sprintf(desc, "@c Barcode_Labelk Sets the label for barcodes that match barcode pattern kupa.");
+        prm_add(id, PROG_FLAGS(progIndex), PRM_PRIORITY_3-i, desc, STRING(""), END);
     }
     
     // load params
-    prm_get("Edge distance", &g_dist, END);    
+   prm_get("Edge distance", &g_dist, END);    
     prm_get("Edge threshold", &g_thresh, END);    
     g_hThresh = g_thresh*LINE_HTHRESH_RATIO;
     prm_get("Minimum line width", &g_minLineWidth, END);
@@ -761,16 +743,16 @@ int line_loadParams(int8_t progIndex)
     prm_get("Minimum line length", &g_minLineLength, END);
     //g_minLineLength2 = g_minLineLength*g_minLineLength; // square it 
     prm_get("Maximum line compare", &g_maxLineCompare, END);
-    prm_get("White line", &g_whiteLine, END);
-    prm_get("Intersection filtering", &g_lineFiltering, END);
+    // prm_get("White line", &g_whiteLine, END);
+    // prm_get("Intersection filtering", &g_lineFiltering, END);
 //    leading = g_lineFiltering*LINE_FILTERING_MULTIPLIER;
   //  trailing = (leading+1)>>1;
     //g_primaryIntersection.setTiming(leading, trailing); 
-    prm_get("Line filtering", &g_lineFiltering, END);
-    prm_get("Barcode filtering", &g_barcodeFiltering, END);
-    prm_get("Default turn angle", &g_defaultTurnAngle, END);
-    prm_get("Delayed turn", &g_delayedTurn, END);
-    prm_get("Manual vector select", &g_manualVectorSelect, END);
+    // prm_get("Line filtering", &g_lineFiltering, END);
+    // prm_get("Barcode filtering", &g_barcodeFiltering, END);
+    // prm_get("Default turn angle", &g_defaultTurnAngle, END);
+    // prm_get("Delayed turn", &g_delayedTurn, END);
+    // prm_get("Manual vector select", &g_manualVectorSelect, END);
     prm_get("Go", &g_go, END);    
     prm_get("Repeat", &g_repeat, END);    
     
@@ -811,10 +793,10 @@ int line_open(int8_t progIndex)
     g_lineState = LINE_STATE_ACQUIRING;
     g_primaryActive = false;
     g_newIntersection = false;
-    g_delayedTurn = false;
+    // g_delayedTurn = false;
     g_defaultTurnAngle = 0;
 
-    g_manualVectorSelect = false;
+    // g_manualVectorSelect = false;
     
     g_renderMode = LINE_RM_ALL_FEATURES;
     
@@ -1325,13 +1307,13 @@ int line_getPrimaryFrame2(uint8_t typeMap, uint8_t *buf, uint16_t len)
 
 int line_setMode(int8_t modeMap)
 {
-    g_delayedTurn = (modeMap & LINE_MODEMAP_TURN_DELAYED) ? true : false;
+    // g_delayedTurn = (modeMap & LINE_MODEMAP_TURN_DELAYED) ? true : false;
     g_whiteLine = (modeMap & LINE_MODEMAP_WHITE_LINE) ? true : false;
-    g_manualVectorSelect = (modeMap & LINE_MODEMAP_MANUAL_SELECT_VECTOR) ? true : false;
+    // g_manualVectorSelect = (modeMap & LINE_MODEMAP_MANUAL_SELECT_VECTOR) ? true : false;
     return 0;
 }
 
-int line_legoLineData(uint8_t *buf, uint32_t buflen)
+/* int line_legoLineData(uint8_t *buf, uint32_t buflen)
 {
 //    Line2 *primary;
     uint32_t x;
@@ -1373,4 +1355,4 @@ int line_legoLineData(uint8_t *buf, uint32_t buflen)
     memcpy(lastData, buf, 4);   
     return 4;
 }
-
+*/

@@ -26,6 +26,7 @@
 
 int main(void)
 {
+	/*
 	//CTIMER_DECLARE();
 #if 0
 	uint32_t memory = SRAM1_LOC;
@@ -58,6 +59,12 @@ int main(void)
  		getRLSFrame(&memory, &lut); 
 
 #endif
+*/
+
+
+
+
+
 #if 1
 	_DBG("M0 start\n");
 
@@ -67,7 +74,14 @@ int main(void)
 	rls_init();
 	exec_loop();
 #endif
-#if 0
+
+
+
+
+
+
+
+/*#if 0
 	while(1)
 	{
 		if (g_foo)
@@ -108,6 +122,7 @@ int main(void)
 		printf("%d\n", CTIMER_GET());
 	}	
 #endif
+ 
 #if 0
 {
 	uint32_t i;
@@ -131,6 +146,6 @@ int main(void)
  		getRLSFrame(&memory, &size); //, (uint32_t *)&lut);
 }
 #endif
-
+*/
 return 0;
 }
