@@ -1,0 +1,15 @@
+cmake-build-debug/
+cmake-build-release/
+.idea/
+**/*.o
+**/*.d
+**/*.su
+**/*.a
+**/*.mk
+**/*.launch
+**/*.jlink
+**/*.hex
+**/*.map
+**/*.axf
+**/*.settings
+**/makefile
