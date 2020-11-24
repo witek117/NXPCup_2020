@@ -1,9 +1,9 @@
 set(NAME MKV)
 
-set(DEVICE "CPU_MKV58F1xxx4")
-add_compile_definitions(	CPU_MKV58F1M0VLQ24 
-							CPU_MKV58F1M0VLQ24_cm7
-							CPU_MKV58F1xxx4
+set(DEVICE "CPU_MKL25Z128xxx4")
+add_compile_definitions(	CPU_MKL25Z128VLK4
+							CPU_MKL25Z128VLK4_cm0
+							CPU_MKL25Z128xxx4
 							FSL_RTOS_BM
 							SDK_OS_BAREMETAL
 						)
@@ -13,7 +13,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/CMSIS/CMSIS.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/debug_module/debug_module.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/drivers/drivers.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/NXP_hal/NXP_hal.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/algorithms/algorithms.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/toolchain.cmake)
 
 set(SOURCES ${CMAKE_CURRENT_LIST_DIR}/source/cpp_config.cpp
@@ -22,7 +21,7 @@ set(SOURCES ${CMAKE_CURRENT_LIST_DIR}/source/cpp_config.cpp
 			${CMAKE_CURRENT_LIST_DIR}/source/semihost_hardfault.c)
 
 add_executable(${NAME} ${SOURCES})
-include_directories(${CMAKE_CURRENT_LIST_DIR}/source)
+target_include_directories(${NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/source)
 
 set (CWARN "-Wall -Wstrict-prototypes -Wextra ")
 set (CXXWARN "-Wall -Wextra")
@@ -34,7 +33,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11 ${CWARN} ${CTUNING} ${CMCU} ${RAN
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++2a -fconcepts -fno-exceptions -fno-rtti ${CXXWARN} ${CTUNING} ${CMCU} ${RANDOM_DEFS}")
 set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/source/cpp_config.cpp PROPERTIES COMPILE_FLAGS "-w")
 
-set(PLATFORM_LINKER_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/MKV58F1M0xxx24.ld)
+set(PLATFORM_LINKER_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/MKL25Z128xxx4.ld)
 set_target_properties(${NAME} PROPERTIES LINK_FLAGS "-T ${PLATFORM_LINKER_SCRIPT} ${ARMFLOAT} -flto -Wl,--gc-sections -specs=nano.specs -specs=nosys.specs -flto -lc")
 
 target_link_libraries(${NAME} halina board CMSIS debug_module drivers NXP_hal)

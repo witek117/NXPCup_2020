@@ -8,8 +8,6 @@
 //#include <Wire.h>
 
 #define LOG_CHANNEL SENSOR
-#define SENSOR_LOG_CHANNEL 2
-#define SENSOR_LOG_CHANNEL_LEVEL LOG_LEVEL_DEBUG
 
 #include "logger.h"
 

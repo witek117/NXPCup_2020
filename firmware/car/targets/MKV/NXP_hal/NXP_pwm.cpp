@@ -6,8 +6,6 @@
  *
  */
 #define LOG_CHANNEL MOTOR
-#define MOTOR_LOG_CHANNEL 2
-#define MOTOR_LOG_CHANNEL_LEVEL LOG_LEVEL_DEBUG
 
 #include <limits>
 #include <bits/algorithmfwd.h>

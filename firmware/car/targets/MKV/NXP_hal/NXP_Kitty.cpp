@@ -6,42 +6,42 @@
  *
  */
 
-#include "algorithm_unit.hpp"
+#define LOG_CHANNEL KITTY
+
 #include "NXP_Kitty.hpp"
+
+#include "algorithm_unit.hpp"
 #include "clock_config.h"
 #include "pin_mux.h"
 
-#define LOG_CHANNEL KITTY
-#define KITTY_LOG_CHANNEL 2
-#define KITTY_LOG_CHANNEL_LEVEL LOG_LEVEL_DEBUG
 
 #include "logger.h"
-bool algorithmTrigger = false;
+bool algorithmTrigger       = false;
 bool commandTerminalTrigger = false;
-bool frameTrigger = false;
+bool frameTrigger           = false;
 
 bool pixyTrigger = false;
-void pit_generalHandler(uint32_t *)
-{
-    algorithmTrigger = true;
+void pit_generalHandler(uint32_t*) {
+    algorithmTrigger       = true;
     commandTerminalTrigger = true;
-    frameTrigger = true;
-    pixyTrigger = true;
+    frameTrigger           = true;
+    pixyTrigger            = true;
+}
+
+static void logWrite(char c, [[maybe_unused]] void* const context) {
+    Kitty::kitty().uartDebug.write(c);
 }
 
 uint_fast64_t Kitty::milliseconds = 0;
-extern "C"
-{
-    bool systickTrigger = false;
-    void SysTick_Handler(void)
-    {
-        Kitty::millisIncrease();
-        systickTrigger = true;
-    }
+extern "C" {
+bool systickTrigger = false;
+void SysTick_Handler(void) {
+    Kitty::millisIncrease();
+    systickTrigger = true;
+}
 }
 
-void Kitty::init()
-{
+void Kitty::init() {
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
     SysTick_Config(SystemCoreClock / 1000);
@@ -50,6 +50,7 @@ void Kitty::init()
 
     FTM_Init();
     uartDebug.init();
+    log_setWriteFunction(logWrite);
     uartCommunication.init();
     uartCommunication.initDMA();
     uartToKLZ.init();
@@ -70,8 +71,8 @@ void Kitty::init()
 
     motors.run();
     camera.start();
-    encodersPit.appendCallback(NXP_Encoder::ISR, reinterpret_cast<uint32_t *>(&encoderRight));
-    encodersPit.appendCallback(NXP_Encoder::ISR, reinterpret_cast<uint32_t *>(&encoderLeft));
+    encodersPit.appendCallback(NXP_Encoder::ISR, reinterpret_cast<uint32_t*>(&encoderRight));
+    encodersPit.appendCallback(NXP_Encoder::ISR, reinterpret_cast<uint32_t*>(&encoderLeft));
     encodersPit.init();
     // uartCommunication.setRedirectHandler([](uint8_t ch) {Kitty::kitty().commandManager.put_char(ch);});
     display.enable();
@@ -85,35 +86,31 @@ void Kitty::init()
     algorithmUnit.checkSwitches();
 }
 
-void Kitty::proc()
-{
+void Kitty::proc() {
     static int16_t motorsValues[2];
     static int16_t encodersValues[2];
     static uint8_t linesValues[2];
-    float leftSpeedToModify = algorithmUnit.speed;
-    float rightSpeedToModify = algorithmUnit.speed;
-    uint16_t encoderLeftSample = encoderLeft.getTicks();
-    uint16_t encoderRightSample = encoderRight.getTicks();
-    if (!menu.proc(systickTrigger))
-    {
+    float          leftSpeedToModify  = algorithmUnit.speed;
+    float          rightSpeedToModify = algorithmUnit.speed;
+    uint16_t       encoderLeftSample  = encoderLeft.getTicks();
+    uint16_t       encoderRightSample = encoderRight.getTicks();
+    if (!menu.proc(systickTrigger)) {
         log_notice("L_in: %f R_in: %f", algorithmUnit.speed, algorithmUnit.speed);
         //        algorithmUnit.pid.calculate(&leftSpeedToModify, &rightSpeedToModify, encoderLeftSample, encoderRightSample);
         log_notice("L_out: %f R_out: %f", leftSpeedToModify, rightSpeedToModify);
         motors.setValue(leftSpeedToModify, rightSpeedToModify);
     }
 
-    if (frameTrigger)
-    {
+    if (frameTrigger) {
         static uint8_t line1 = 10;
         static uint8_t line2 = 5;
-        motorsValues[0] = int16_t(algorithmUnit.speed * 100.0);
-        motorsValues[1] = int16_t(algorithmUnit.speed * 100.0);
-        encodersValues[0] = int16_t(encoderLeftSample);
-        encodersValues[1] = int16_t(encoderRightSample);
-        linesValues[0] = line1;
-        linesValues[1] = line2;
-        frame.setPayload(linesValues, motorsValues, encodersValues, int16_t(servo.get() * 100), 0, 0,
-                         0, 0, 0, 0);
+        motorsValues[0]      = int16_t(algorithmUnit.speed * 100.0);
+        motorsValues[1]      = int16_t(algorithmUnit.speed * 100.0);
+        encodersValues[0]    = int16_t(encoderLeftSample);
+        encodersValues[1]    = int16_t(encoderRightSample);
+        linesValues[0]       = line1;
+        linesValues[1]       = line2;
+        frame.setPayload(linesValues, motorsValues, encodersValues, int16_t(servo.get() * 100), 0, 0, 0, 0, 0, 0);
         frame.sendFrameProc();
         frameTrigger = false;
     }
@@ -126,8 +123,7 @@ void Kitty::proc()
     magicDiodComposition();
 }
 
-void Kitty::FTM_Init()
-{
+void Kitty::FTM_Init() {
     SIM->SOPT2 |= SIM_SOPT2_PLLFLLSEL_MASK;
     SIM->SOPT2 |= SIM_SOPT2_TIMESRC(1);
     SIM->SCGC5 |= SIM_SCGC5_PORTA_MASK;
@@ -137,41 +133,34 @@ void Kitty::FTM_Init()
     SIM->SCGC6 |= SIM_SCGC6_FTM3_MASK;
 }
 
-void Kitty::magicDiodComposition()
-{
-    static uint32_t licznik = 0;
-    static int8_t led_index = 0;
-    static uint8_t direction = 0;
-    static uint8_t old_led = 0;
+void Kitty::magicDiodComposition() {
+    static uint32_t licznik   = 0;
+    static int8_t   ledIndex  = 0;
+    static uint8_t  direction = 0;
+    static uint8_t  oldLed    = 0;
     licznik++;
-    if (licznik == 50000)
-    {
+    if (licznik == 10000) {
         licznik = 0;
-        if (direction == 0)
-        {
-            old_led = led_index;
-            led_index++;
-            if (led_index == 8)
-            {
-                led_index = 6;
+        if (direction == 0) {
+            oldLed = ledIndex;
+            ledIndex++;
+            if (ledIndex == 8) {
+                ledIndex  = 6;
                 direction = 1;
-                old_led = 7;
+                oldLed    = 7;
             }
-            ledLine.at(led_index).set();
-            ledLine.at(old_led).reset();
-        }
-        else if (direction == 1)
-        {
-            old_led = led_index;
-            led_index--;
-            if (led_index == -1)
-            {
-                led_index = 1;
+            ledLine.at(ledIndex).set();
+            ledLine.at(oldLed).reset();
+        } else if (direction == 1) {
+            oldLed = ledIndex;
+            ledIndex--;
+            if (ledIndex == -1) {
+                ledIndex  = 1;
                 direction = 0;
-                old_led = 0;
+                oldLed    = 0;
             }
-            ledLine.at(led_index).set();
-            ledLine.at(old_led).reset();
+            ledLine.at(ledIndex).set();
+            ledLine.at(oldLed).reset();
         }
     }
 }

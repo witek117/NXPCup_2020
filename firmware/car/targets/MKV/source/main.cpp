@@ -6,19 +6,17 @@
  *
  */
 
+#include "logger.h"
+
 #include "HALina.hpp"
 #include "NXP_Kitty.hpp"
 #include "clock_config.h"
 
-int main(){
+int main() {
     BOARD_BootClockRUN();
     Kitty& kitty = Kitty::kitty();
     kitty.init();
-
-    while (true){
+    while (true) {
         kitty.proc();
     }
 }
-
-
-

@@ -163,11 +163,13 @@ extern "C" {
 #include <stdint.h>
 #include <string.h>
 
-#undef LOG_LEVEL
+#include "logger_config.h"
 
-#define LOG_ENABLE 1
-#define LOG_LAST_CHANNEL 255
-#define LOG_LEVEL 7
+typedef uint32_t (*log_timeWrapper)(void);
+typedef void (*log_writeWrapper)(char c, void* const context);
+
+#undef LOG_LEVEL
+#define LOG_LEVEL LOG_LEVEL_DEBUG
 
 #ifndef LOG_ENABLE
 #define LOG_ENABLE 0
@@ -191,7 +193,6 @@ extern "C" {
 #define LOG_LEVEL LOG_LEVEL_NOTICE  // The default log verbosity
 #endif                              // #ifndef LOG_LEVEL
 
-//#define LOG_LEVEL 7
 
 // Definitions of valid log levels (according to syslog)
 #define LOG_LEVEL_EMERGENCY 0
@@ -322,6 +323,8 @@ extern "C" {
 
 #if 1 == HALI_LOG_ENABLED
 void log_write(const uint8_t channel, const uint8_t level, const char* const channelName,  const char* filename, const int line, const char* format, ...);
+void log_setTimesourceFunction(log_timeWrapper timestampFunction);
+void log_setWriteFunction(log_writeWrapper writeFunction);
   #define LOG(level, ...) if(level <= LOG_LEVEL) log_write(HALI_CHANNEL, UINT8_C(level), HALI_STR(HALI_LOG_HEADER), __FILENAME__, __LINE__, __VA_ARGS__);
 #else
 #define LOG(level, ...)

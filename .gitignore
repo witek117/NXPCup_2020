@@ -165,4 +165,4 @@ $RECYCLE.BIN/
 .DS_Store
 
 _NCrunch*
-
+firmware/car/.clang-format

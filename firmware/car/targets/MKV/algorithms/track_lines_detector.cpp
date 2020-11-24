@@ -9,8 +9,6 @@
 #include "track_lines_detector.hpp"
 
 #define LOG_CHANNEL TRACK
-#define TRACK_LOG_CHANNEL 4
-#define TRACK_LOG_CHANNEL_LEVEL LOG_LEVEL_DEBUG
 
 #include "logger.h"
 

@@ -7,8 +7,6 @@
 */
 
 #define LOG_CHANNEL MENU
-#define MENU_LOG_CHANNEL 2
-#define MENU_LOG_CHANNEL_LEVEL LOG_LEVEL_DEBUG
 
 #include "NXP_Kitty.hpp"
 #include "logger.h"

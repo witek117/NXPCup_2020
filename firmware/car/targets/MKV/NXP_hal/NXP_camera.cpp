@@ -1,6 +1,4 @@
 #define LOG_CHANNEL CAMERA
-#define CAMERA_LOG_CHANNEL 2
-#define CAMERA_LOG_CHANNEL_LEVEL LOG_LEVEL_DEBUG
 
 #include "NXP_camera.hpp"
 #include "logger.h"

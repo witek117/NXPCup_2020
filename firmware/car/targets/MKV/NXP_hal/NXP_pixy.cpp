@@ -8,8 +8,6 @@
 #include "NXP_pixy.hpp"
 
 #define LOG_CHANNEL PIXY
-#define PIXY_LOG_CHANNEL 5
-#define PIXY_LOG_CHANNEL_LEVEL LOG_LEVEL_ERROR
 
 #include "logger.h"
 

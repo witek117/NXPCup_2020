@@ -13,20 +13,13 @@
 namespace halina {
 
     class PORT {
-    public:
+      public:
         virtual void setMux() = 0;
-
     };
 
     class GPIO {
-
-    public:
-        enum class Mode : uint8_t {
-            INPUT,
-            OUTPUT,
-            TIMER,
-            INTERRUPT
-        };
+      public:
+        enum class Mode : uint8_t { INPUT, OUTPUT, TIMER, INTERRUPT };
 
         virtual void set() = 0;
 
@@ -39,4 +32,4 @@ namespace halina {
         virtual void init() = 0;
     };
 
-}
+} // namespace halina

@@ -12,7 +12,6 @@ add_library(NXP_hal STATIC  ${CMAKE_CURRENT_LIST_DIR}/NXP_adc.cpp
                             ${CMAKE_CURRENT_LIST_DIR}/NXP_servo.cpp
                             ${CMAKE_CURRENT_LIST_DIR}/NXP_uart.cpp
                             ${CMAKE_CURRENT_LIST_DIR}/VL53L0X.cpp
-                            ${CMAKE_CURRENT_LIST_DIR}/logger.cpp 
                             ${CMAKE_CURRENT_LIST_DIR}/NXP_pixy.cpp 
                             )
 target_include_directories(NXP_hal PUBLIC ${CMAKE_CURRENT_LIST_DIR})
