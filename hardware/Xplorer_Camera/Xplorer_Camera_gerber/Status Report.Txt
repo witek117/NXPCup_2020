@@ -1,0 +1,12 @@
+Output: NC Drill Files
+Type  : NC Drill
+From  : PCB Document [Xplorer_Camera.PcbDoc]
+   Generated File[Xplorer_Camera-Plated.TXT]
+   Generated File[Xplorer_Camera.LDP]
+   Generated File[Xplorer_Camera.DRR]
+
+
+Files Generated   : 3
+Documents Printed : 0
+
+Finished Output Generation At 00:15:36 On 24.08.2020
